@@ -8,6 +8,7 @@ import Mapa from '@/components/Mapa';
 
 export default function Home() {
     const [codPostal, setCodPostal] = useState(null);
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
     //ctrl+mayus+r
     return (
         <div>
@@ -21,7 +22,7 @@ export default function Home() {
                 let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${codPostal}&countrycodes=es`);
                 const result= await res.json();
 
-                const response = await fetch(`/api/eventos/?lat=${result.lat},lon=${result.lon}`)
+                const response = await fetch(`${apiUrl}/api/eventos/?lat=${result.lat},lon=${result.lon}`)
 
                 if (response.ok) {
                 console.log('Evento enviada con éxito');

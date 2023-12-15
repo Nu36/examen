@@ -4,6 +4,8 @@ import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import Link from "next/link";
 import { signIn, useSession, signOut } from "next-auth/react";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+
 const NavigationBar = () => {
     const { data: session } = useSession();
     return (
@@ -35,13 +37,13 @@ const NavigationBar = () => {
                             className="w-10 h-10 rounded-full cursor-pointer"
                         />
                         <Button
-                            onClick={async () => {await signOut({ callbackUrl: "/",})}}> Cerrar sesi&oacute;n
+                            onClick={async () => {await signOut({ callbackUrl: `${apiUrl}/`,})}}> Cerrar sesi&oacute;n
                         </Button>
                     </div>
                 </div>
                  : 
                 <div>
-                    <Button onClick={() => {signIn("google", { callbackUrl: "/",}).then(() => {
+                    <Button onClick={() => {signIn("google", { callbackUrl: `${apiUrl}/`,}).then(() => {
                         console.log("Sesión iniciada correctamente")
                     })}} className="bg-sky-400 px-3 py-2 rounded"> Iniciar sesi&oacute;n </Button>
                 </div>

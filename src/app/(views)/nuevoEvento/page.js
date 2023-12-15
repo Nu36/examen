@@ -12,13 +12,15 @@ export default function Home() {
     const [file, setFile] = useState('');
     const { data: session } = useSession();
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         console.log(nombre);
         console.log(lugar)
 
-        const responseimg = await fetch("/api/upload", {
+        const responseimg = await fetch(`${apiUrl}/api/upload`, {
             method: "POST",
             body: JSON.stringify({ image: file }),
             headers: {
@@ -26,7 +28,7 @@ export default function Home() {
             }
         });
 
-        const response = await fetch(`/api/eventos`, {
+        const response = await fetch(`${apiUrl}/api/eventos`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -35,7 +37,7 @@ export default function Home() {
             nombre: nombre,
             lugar: lugar,
             organizador: session.user.email,
-            imagen: responseimg.secure_url,
+            imagen: responseimg.url,
         }),
         });
 
