@@ -13,7 +13,13 @@ export const GET = async (req, res) => {
     try {
         let result;
 
-        result = await Evento.find({linea: linea, sentido: sentido});
+        if(nombre != null) {
+            result = await Evento.find({nombre: nombre});
+        } else if(linea != null && sentido != null) {
+            result = await Evento.find({linea: linea, sentido: sentido});
+        } else {
+            result = await Evento.find({});
+        }
         
         return NextResponse.json(result);
     } catch (error) {

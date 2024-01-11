@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
 import { v2 as cloudinary } from "cloudinary";
-import path from "path";
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 
@@ -10,9 +8,12 @@ cloudinary.config({
 });
 
 export async function POST(request) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+
     try {
         const body = await request.json();
         const image = body.image;
+        const eventoId = body.nombre;
         
         if (!image) {
             return NextResponse.json("no se ha subido ninguna imagen", {status: 400});
@@ -29,7 +30,15 @@ export async function POST(request) {
             })
             .end(buffer);
         });
-        console.log(response.secure_url)
+
+        // Añadir la imagen al evento
+        const r = await fetch(`${apiUrl}/api/eventos/${eventoId}`, {
+            method: "PUT",
+            body: JSON.stringify({ imagen: response.secure_url }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
     
         return NextResponse.json({
             body: JSON.stringify({ message: "imagen subida", url: response.secure_url }),

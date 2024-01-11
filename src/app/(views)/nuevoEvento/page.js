@@ -17,17 +17,6 @@ export default function Home() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(nombre);
-        console.log(lugar)
-
-        const responseimg = await fetch(`${apiUrl}/api/upload`, {
-            method: "POST",
-            body: JSON.stringify({ image: file }),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-
         const response = await fetch(`${apiUrl}/api/eventos`, {
         method: 'POST',
         headers: {
@@ -37,8 +26,20 @@ export default function Home() {
             nombre: nombre,
             lugar: lugar,
             organizador: session.user.email,
-            imagen: responseimg.url,
         }),
+        });
+
+        const responsej = await response.json()
+        
+        const responseimg = await fetch(`${apiUrl}/api/upload`, {
+            method: "POST",
+            body: JSON.stringify({ 
+                image: file,
+                nombre : responsej._id
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
         });
 
         if (response.ok) {
@@ -69,6 +70,7 @@ export default function Home() {
                 value={lugar}
                 onChange={(e) => setLugar(e.target.value)}
             />
+            <br />
             <input
                 type="file"
                 onChange={(e) => {
