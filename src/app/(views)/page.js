@@ -61,7 +61,7 @@ export default function Home() {
                 <button type="submit" variant="primary"> Enviar</button>
             </form>
             <div id='ubicacion' fluid className='ps-0'>
-                <Mapa pos={[Number(36.734667), Number(-4.426399)]}/>
+                <Mapa pos={[Number(36.734667), Number(-4.426399)]} eventos={eventos}/>
             </div>
             <br/>
             <div>
@@ -83,6 +83,9 @@ export function CardEvento({ evento }) {
                 </Link>
                 <Link href={`/${evento._id}`} className='text-decoration-none'>
                     <CardTitle className='text-wrap mx-2'>{evento.nombre}</CardTitle>
+                </Link>
+                <Link href={`/${evento._id}`} className='text-decoration-none'>
+                    <CardTitle className='text-wrap mx-2'>{evento.organizador}</CardTitle>
                 </Link>
             </Card>
         </Col>
