@@ -16,8 +16,6 @@ export const POST = async (req) => {
     await connectDB();
     try {
         const body = await req.json();
-        console.log("entra en POST\n")
-        console.log(body)
         const newLoginLog = await LoginLog.create(body);
         return NextResponse.json(newLoginLog, { status: 201 });
     } catch (error) {

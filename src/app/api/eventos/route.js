@@ -31,7 +31,6 @@ export const POST = async (req) => {
     await connectDB();
     try {
         const body = await req.json();
-        console.log(body)
         const newEvento = await Evento.create(body);
         return NextResponse.json(newEvento, { status: 201 });
     } catch (error) {

@@ -17,7 +17,7 @@ export const GET = async (request, { params }) => {
     } catch (error) {
         return NextResponse.json(null, { status: 500 });
     }
-  };
+};
 
 export const DELETE = async (request, { params }) => {
     await connectDB();

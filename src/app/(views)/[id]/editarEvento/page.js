@@ -1,22 +1,35 @@
 "use client"
-import { useState } from "react";
+import React, { useEffect, useState} from 'react';
 import { signIn, useSession, signOut } from "next-auth/react";
 
-export default function Home() {
+export default function Home({ params }) {
     const [nombre, setNombre] = useState('');
     const [lugar, setLugar] = useState('');
     const [file, setFile] = useState('');
+    const [evento, setEvento] = useState('');
     const { data: session } = useSession();
 
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+
+    useEffect(() => {
+        fetchEvento();
+    }, [session]);
+
+    const fetchEvento = async () => {
+        const evento = await fetch(`${apiUrl}/api/eventos/${params.id}`, { cache: 'no-store' }).then(res => res.json());
+        setEvento(evento);   
+        setLugar(evento.lugar);
+        setNombre(evento.nombre)
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const ubi = await fetch(`${apiUrl}/api/${lugar}/ubicacion`, { cache: 'no-store' }).then(res => res.json());
 
-        const response = await fetch(`${apiUrl}/api/eventos`, {
-        method: 'POST',
+        const response = await fetch(`${apiUrl}/api/eventos/${params.id}`, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -53,7 +66,7 @@ export default function Home() {
         <div>
         <form onSubmit={handleSubmit}>
             <label>
-            Crea un nuevo evento.
+            Edita este evento.
             <br/>
             Nombre:
             <br/>
@@ -87,7 +100,7 @@ export default function Home() {
             />
             </label>
             <br />
-            <button type="submit" variant="primary" >Crear</button>
+            <button type="submit" variant="primary">Editar</button>
         </form>
         </div>
     );

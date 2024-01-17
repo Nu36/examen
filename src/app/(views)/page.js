@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import { useSession } from "next-auth/react";
 import { Card, CardImg, CardTitle, Row, Col, Container, CardText, CardLink, CardFooter, Button } from 'react-bootstrap';
 import Mapa from '@/components/Mapa';
+import { RESPONSE_LIMIT_DEFAULT } from "next/dist/server/api-utils";
 
 export default function Home() {
     const { data: session } = useSession();
@@ -17,8 +18,11 @@ export default function Home() {
     }, [session]);
 
     const fetchEventos = async () => {
-        const eventos = await fetch(`${apiUrl}/api/eventos`, { cache: 'no-store' }).then(res => res.json());
-        setEventos(eventos);
+        if(codPostal == null || codPostal == "") {
+            const eventos = await fetch(`${apiUrl}/api/eventos`, { cache: 'no-store' }).then(res => res.json());
+            setEventos(eventos);
+            setCodPostal("")
+        }
     };
 
     return (
@@ -39,15 +43,14 @@ export default function Home() {
             <form onSubmit={async (e) => {
                 e.preventDefault();
 
-                let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${codPostal}&countrycodes=es`);
-                const result= await res.json();
-
-                const response = await fetch(`${apiUrl}/api/eventos/?lat=${result.lat},lon=${result.lon}`)
+                const response = await fetch(`${apiUrl}/api/${codPostal}`)
 
                 if (response.ok) {
-                console.log('Evento enviada con éxito');
+                    console.log('Evento enviado con éxito');
+                    let result = await response.json()
+                    setEventos(result);
                 } else {
-                console.error('Error al enviar el evento');
+                    console.error('Error al enviar el evento');
                 }
                 }}>
                 <label>

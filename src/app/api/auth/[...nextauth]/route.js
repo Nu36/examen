@@ -10,8 +10,7 @@ const handler = NextAuth({
   ], callbacks: {
     async session(session) {
       const user = session.session.user;
-      if (!user) {
-        console.log(`El usuario ${user.email} ha iniciado sesión`);
+      if (user) {
         await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/loginlog`, {
           method: "POST",
           headers: {
