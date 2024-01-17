@@ -19,6 +19,7 @@ export async function POST(request) {
         const body = await request.json();
         const image = body.image;
         const pagoId = body.nombre;
+        console.log(pagoId)
         
         if (!image) {
             return NextResponse.json("no se ha subido ninguna imagen", {status: 400});

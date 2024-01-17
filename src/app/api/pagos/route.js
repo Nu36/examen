@@ -1,6 +1,6 @@
 import connectDB from "@/lib/db";
 import { NextResponse } from "next/server";
-import { Pago } from "@/models/Pago";
+import { Paga } from "@/models/Paga";
 import { getServerSession } from "next-auth";
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
@@ -18,11 +18,11 @@ export const GET = async (req, res) => {
         let result;
 
         if(email != null) {
-            result = await Pago.find({email: email});
+            result = await Paga.find({email: email});
         } else if(usuario != null) {
-            result = await Pago.find({}).distinct(email);
+            result = await Paga.find({}).distinct(email);
         } else {
-            result = await Pago.find({}).sort({createdAt: -1});
+            result = await Paga.find({}).sort({createdAt: -1});
         }
         
         return NextResponse.json(result);
@@ -38,10 +38,11 @@ export const POST = async (req) => {
         if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
 
         const body = await req.json();
-        const newPago = await Pago.create(body)
+        const newPaga = await Paga.create(body)
         
-        return NextResponse.json(newPago, { status: 201 });
+        return NextResponse.json(newPaga, { status: 201 });
     } catch (error) {
+        console.log(error)
         return NextResponse.json(null, { status: 500 });
     }
 };

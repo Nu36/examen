@@ -18,10 +18,12 @@ export default function Home() {
     }, [session]);
 
     const fetchPagos = async () => {
-        const pagos = await fetch(`${apiUrl}/api/pagos`, { cache: 'no-store' }).then(res => res.json());
-        const usuario = session.user.email
+        if(session) {
+            const usuario = session.user.email
+            setYo(usuario);
+        }
+        const pagos = await fetch(`${apiUrl}/api/pagos`, { cache: 'no-store' }).then(res => res.json());   
         setPagos(pagos);
-        setYo(usuario);
     };
 
     const email = session?.user?.email;
@@ -52,45 +54,45 @@ export default function Home() {
             </div>
             <div>
                 <p>Tu saldo es: {saldo}</p>
-                {/* <Saldo usur={yo} /> */}
+                <Saldo usur={yo} />
             </div>
         </div>
     );
 
-    // function Saldo({ usur }) {
-    //     const calcularSaldo = async () => {
-    //         const response = await fetch(`${apiUrl}/api/pagos?email=${usur}`, { cache: 'no-store' }).then(res => res.json());
-    //         let pagosYo;
+    function Saldo({ usur }) {
+        const calcularSaldo = async () => {
+            const response = await fetch(`${apiUrl}/api/pagos?email=${usur}`, { cache: 'no-store' }).then(res => res.json());
+            let pagosYo;
     
-    //         response.map((pago) => (
-    //             pagosYo += pago.importe
-    //         ))
+            response.map((pago) => (
+                pagosYo += pago.importe
+            ))
     
-    //         const responseTodos = await fetch(`${apiUrl}/api/pagos`, { cache: 'no-store' }).then(res => res.json());
-    //         let pagosTodos;
+            const responseTodos = await fetch(`${apiUrl}/api/pagos`, { cache: 'no-store' }).then(res => res.json());
+            let pagosTodos;
     
-    //         const contarUsuarios = await fetch(`${apiUrl}/api/pagos?usuarios=u`, { cache: 'no-store' }).then(res => res.json())
+            const contarUsuarios = await fetch(`${apiUrl}/api/pagos?usuarios=u`, { cache: 'no-store' }).then(res => res.json())
     
-    //         responseTodos.map((pago) => (
-    //             pagosTodos += pago.importe
-    //         ))      
+            responseTodos.map((pago) => (
+                pagosTodos += pago.importe
+            ))      
     
-    //         let saldoYo = pagosYo - (pagosTodos / contarUsuarios.length)
-    //         setSaldo(saldoYo)
+            let saldoYo = pagosYo - (pagosTodos / contarUsuarios.length)
+            setSaldo(saldoYo)
     
-    //         if (response.ok) {
-    //             console.log('saldo calculado con éxito');
-    //         } else {
-    //             console.error('Error al calcular el saldo');
-    //         }
-    //     };
+            if (response.ok) {
+                console.log('saldo calculado con éxito');
+            } else {
+                console.error('Error al calcular el saldo');
+            }
+        };
     
-    //     if (usur) return (
-    //         <>
-    //             <Button onClick={calcularSaldo} className="btn btn-danger"> Calcular mi saldo </Button>
-    //         </>
-    //     );
-    // }
+        if (usur) return (
+            <>
+                <Button onClick={calcularSaldo} className="btn btn-danger"> Calcular mi saldo </Button>
+            </>
+        );
+    }
 }
 
 export function CardPago({ pago }) {

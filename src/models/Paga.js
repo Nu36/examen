@@ -1,21 +1,19 @@
 import mongoose from "mongoose";
 
-const pagoSchema = new mongoose.Schema(
+const pagaSchema = new mongoose.Schema(
     {
         concepto:{
             type: String,
             required: true
         },
         importe:{
-            type: String,
-            required: true
+            type: String
         },
         direccion:{
             type: String
         },
         codPostal:{
-            type: String,
-            required: true
+            type: String
         },
         lon:{
             type: String
@@ -36,6 +34,6 @@ const pagoSchema = new mongoose.Schema(
     }
 )
 
-export const Pago = 
-    mongoose?.models?.pagos || 
-    mongoose.model("pagos", pagoSchema)
+export const Paga = 
+    mongoose?.models?.pagas || 
+    mongoose.model("pagas", pagaSchema)
