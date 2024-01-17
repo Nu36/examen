@@ -1,6 +1,6 @@
 import connectDB from "@/lib/db";
 import { NextResponse } from "next/server";
-import { Evento } from "@/models/Evento";
+import { Pago } from "@/models/Pago";
 import { getServerSession } from "next-auth";
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
@@ -17,7 +17,7 @@ export const GET = async (request, { params }) => {
     try {
         const ubi = await fetch(`${apiUrl}/api/${cod}/ubicacion`, { cache: 'no-store' }).then(res => res.json());
           
-        const result = await Evento.find({
+        const result = await Pago.find({
             $expr: {
                 $and: [
                   {
@@ -46,7 +46,7 @@ export const GET = async (request, { params }) => {
 
         if (!result) {
             return NextResponse.json(
-                { message: `No se ha encontrado un evento con ID ${id}.` },
+                { message: `No se ha encontrado un pago con ID ${id}.` },
                 { status: 404 }
             );
         }
