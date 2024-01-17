@@ -1,9 +1,14 @@
 import connectDB from "@/lib/db";
 import { NextResponse } from "next/server";
 import { Evento } from "@/models/Evento";
+import { getServerSession } from "next-auth";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 export const GET = async (request, { params }) => {
-    await connectDB();
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+
+    await connectDB();  
 
     const apiUrl = "http://localhost:3000";
 

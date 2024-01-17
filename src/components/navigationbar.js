@@ -1,7 +1,6 @@
 "use client"
 import React from 'react';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-import Link from "next/link";
 import { signIn, useSession, signOut } from "next-auth/react";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
@@ -19,8 +18,8 @@ const NavigationBar = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        <Nav.Link href="/nuevoEvento" passhref="true">
-                            Crear otro evento
+                        <Nav.Link href="/nuevoPago" passhref="true">
+                            Crear otro pago
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

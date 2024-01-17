@@ -3,8 +3,10 @@ import { useState } from "react";
 import { signIn, useSession, signOut } from "next-auth/react";
 
 export default function Home() {
-    const [nombre, setNombre] = useState('');
-    const [lugar, setLugar] = useState('');
+    const [concepto, setConcepto] = useState('');
+    const [codPostal, setCodPostal] = useState('');
+    const [direccion, setDireccion] = useState('');
+    const [importe, setImporte] = useState('');
     const [file, setFile] = useState('');
     const { data: session } = useSession();
 
@@ -13,17 +15,19 @@ export default function Home() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const ubi = await fetch(`${apiUrl}/api/${lugar}/ubicacion`, { cache: 'no-store' }).then(res => res.json());
+        const ubi = await fetch(`${apiUrl}/api/${codPostal}/ubicacion`, { cache: 'no-store' }).then(res => res.json());
 
-        const response = await fetch(`${apiUrl}/api/eventos`, {
+        const response = await fetch(`${apiUrl}/api/pagos`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            nombre: nombre,
-            lugar: lugar,
-            organizador: session.user.email,
+            concepto: concepto,
+            importe: importe,
+            direccion: direccion,
+            email: session.user.email,
+            codPostal: codPostal,
             lat: ubi[0].lat,
             lon: ubi[0].lon,
         }),
@@ -42,34 +46,58 @@ export default function Home() {
             }
         });
 
-        if (response.ok) {
-        console.log('Evento creado con éxito');
+        if (responseimg.ok) {
+            console.log('Evento creado con éxito');
+            window.location.href = `/`;
         } else {
-        console.error('Error al crear el evento');
+            console.error('Error al crear el evento');
         }
     };
 
+    const email = session?.user?.email;
+
+    if (!email)
+        return (<h1>Debes iniciar sesión para realizar esta acción.</h1>);
     return (
         <div>
         <form onSubmit={handleSubmit}>
             <label>
-            Crea un nuevo evento.
+            Crea un nuevo pago.
             <br/>
-            Nombre:
+            Concepto:
             <br/>
             <input
                 type="text"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
+                value={concepto}
+                onChange={(e) => setConcepto(e.target.value)}
             />
             <br/>
+            Importe:
+            <br/>
+            <input
+                type="text"
+                value={importe}
+                onChange={(e) => setImporte(e.target.value)}
+            />
+            <br />
+            Dirección:
+            <br/>
+            <input
+                type="text"
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+            />
+            <br />
             Código postal:
             <br/>
+            <label>
             <input
                 type="text"
-                value={lugar}
-                onChange={(e) => setLugar(e.target.value)}
-            />
+                value={codPostal}
+                onChange={(e) => setCodPostal(e.target.value)}
+            /> <abbr title="required" aria-label="required">*</abbr>
+            <br />
+            </label>
             <br />
             <input
                 type="file"

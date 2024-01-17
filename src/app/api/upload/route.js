@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
+import { getServerSession } from "next-auth";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 
@@ -8,12 +10,15 @@ cloudinary.config({
 });
 
 export async function POST(request) {
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+    
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
 
     try {
         const body = await request.json();
         const image = body.image;
-        const eventoId = body.nombre;
+        const pagoId = body.nombre;
         
         if (!image) {
             return NextResponse.json("no se ha subido ninguna imagen", {status: 400});
@@ -31,8 +36,8 @@ export async function POST(request) {
             .end(buffer);
         });
 
-        // Añadir la imagen al evento
-        const r = await fetch(`${apiUrl}/api/eventos/${eventoId}`, {
+        // Añadir la imagen al pago
+        const r = await fetch(`${apiUrl}/api/pagos/${pagoId}`, {
             method: "PUT",
             body: JSON.stringify({ imagen: response.secure_url }),
             headers: {

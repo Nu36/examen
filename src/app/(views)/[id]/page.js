@@ -1,14 +1,12 @@
 "use client"
 import 'leaflet/dist/leaflet.css'
 import { Container, Button } from 'react-bootstrap';
-import Mapa from '@/components/Mapa';
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 export default function Home({ params }) {
     const { data: session } = useSession();
-    const [evento, setevento] = useState(null);
+    const [pago, setPago] = useState(null);
     const [yo, setYo] = useState(null);
     const id = params.id;
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
@@ -16,34 +14,34 @@ export default function Home({ params }) {
     useEffect(() => {
         const fetchData = async () => {
             if (session) {
-                const evento = await fetch(`${apiUrl}/api/eventos/${id}`, { cache: 'no-store' }).then(res => res.json());
+                const pago = await fetch(`${apiUrl}/api/pagos/${id}`, { cache: 'no-store' }).then(res => res.json());
                 const usuario = session.user.email
-                setevento(evento);
+                setPago(pago);
                 setYo(usuario);
             }
         };
         fetchData();
-    }, [session, evento]);
+    }, [session, pago]);
 
     const email = session?.user?.email;
 
     if (!email)
         return (<h1>Debes iniciar sesión para realizar esta acción.</h1>);
     return (<>{
-        evento ? <Container fluid>
-            <Container id='evento'>
-                <h1>{evento.nombre}</h1>
-                <img src={evento.imagen} alt={evento.nombre} style={{ 'maxWidth': '20vw' }} /><br />
+        pago ? <Container fluid>
+            <Container id='pago'>
+                <h1>{pago.concepto}</h1>
+                <img src={pago.imagen} alt={pago.concepto} style={{ 'maxWidth': '20vw' }} /><br />
                 
-                <p>Fecha del evento: {evento.timestamp}</p>
+                <p>Importe del pago: {pago.importe}</p>
             </Container>
 
             <Container id='ubicacion'>
-                <p>Código postal del evento: {evento.lugar}</p>
-                <small>Latitud: {evento.lat}. Longitud: {evento.lon}</small>
-                {/* <Mapa pos={[Number(evento.lat), Number(evento.lon)]} /> */}
+                <p>Código postal del pago: {pago.codPostal}</p>
+                <small>Latitud: {pago.lat}. Longitud: {pago.lon}</small>
+                {/* <Mapa pos={[Number(pago.lat), Number(pago.lon)]} /> */}
                 <br/>
-                <Botones eve={evento} usur={yo} />
+                <Botones pa={pago} usur={yo} />
             </Container>
         </Container>
             : <h1>Cargando...</h1>
@@ -51,9 +49,9 @@ export default function Home({ params }) {
     );
 }
 
-export function Botones({ eve, usur }) {
+export function Botones({ pa, usur }) {
     const handleDelete = async () => {
-        const response = await fetch(`/api/eventos/${eve._id}`, {
+        const response = await fetch(`/api/pagos/${pa._id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -61,18 +59,16 @@ export function Botones({ eve, usur }) {
         });
 
         if (response.ok) {
-            console.log('evento eliminado con éxito');
+            console.log('pago eliminado con éxito');
             window.location.href = `/`;
         } else {
-            console.error('Error al eliminar el evento');
+            console.error('Error al eliminar el pago');
         }
     };
-    <Button onClick={handleDelete} className="btn btn-danger"> Eliminar evento </Button>
 
-    if (usur == eve.organizador) return (
+    if (usur == pa.email) return (
         <>
-            <Link href={`/${eve._id}/editarEvento`} className="btn btn-primary"> Modificar evento </Link>
-            <Button onClick={handleDelete} className="btn btn-danger"> Eliminar evento </Button>
+            <Button onClick={handleDelete} className="btn btn-danger"> Eliminar pago </Button>
         </>
     );
 }

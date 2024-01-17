@@ -16,7 +16,7 @@ const myIcon = new L.Icon({
 });
 
 
-function Mapa({ pos = [12.505, -10.09], eventos}) {
+function Mapa({ pos = [12.505, -10.09], pagos}) {
     return (
         <MapContainer className={style.map} center={pos} zoom={15} scrollWheelZoom={true}>
             <TileLayer
@@ -24,19 +24,14 @@ function Mapa({ pos = [12.505, -10.09], eventos}) {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {
-                eventos.map(evento => (
-                    <Marker position={[evento.lat, evento.lon]} icon={myIcon}>
+                pagos.map(pago => (
+                    <Marker position={[pago.lat, pago.lon]} icon={myIcon}>
                         <Popup>
-                            {evento.nombre}<br/>
+                            {pago.concepto}<br/>
                         </Popup>
                     </Marker> 
                 ))
             }
-            <Marker position={pos} icon={myIcon}>
-                <Popup>
-                    Ubicaci&oacute;n por defecto.
-                </Popup>
-            </Marker>
         </MapContainer>
     );
 }

@@ -5,90 +5,63 @@ import 'leaflet/dist/leaflet.css'
 import { useSession } from "next-auth/react";
 import { Card, CardImg, CardTitle, Row, Col, Container, CardText, CardLink, CardFooter, Button } from 'react-bootstrap';
 import Mapa from '@/components/Mapa';
-import { RESPONSE_LIMIT_DEFAULT } from "next/dist/server/api-utils";
 
 export default function Home() {
     const { data: session } = useSession();
-    const [codPostal, setCodPostal] = useState(null);
-    const [eventos, setEventos] = useState([]);
+    const [pagos, setPagos] = useState([]);
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
     //ctrl+mayus+r
     useEffect(() => {
-        fetchEventos();
+        fetchPagos();
     }, [session]);
 
-    const fetchEventos = async () => {
-        if(codPostal == null || codPostal == "") {
-            const eventos = await fetch(`${apiUrl}/api/eventos`, { cache: 'no-store' }).then(res => res.json());
-            setEventos(eventos);
-            setCodPostal("")
-        }
+    const fetchPagos = async () => {
+        const pagos = await fetch(`${apiUrl}/api/pagos`, { cache: 'no-store' }).then(res => res.json());
+        setPagos(pagos);
     };
 
+    const email = session?.user?.email;
+
+    if (!email)
+        return (<h1>Debes iniciar sesión para realizar esta acción.</h1>);
     return (
         <div>
             <div>
-                <h1>Eventos</h1>
+                <h1>Pagos</h1>
             </div> 
 
             <Row className='row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 justify-content-center'>
                 {
-                    eventos.length === 0 ? <h4><i>🐼No hay eventos🐼</i></h4> :
-                        eventos.map((evento) => (
-                            <CardEvento evento={evento} />
+                    pagos.length === 0 ? <h4><i>🐼No hay pagos🐼</i></h4> :
+                        pagos.map((pago) => (
+                            <CardPago pago={pago} />
                         ))
                 }
             </Row>
             
-            <form onSubmit={async (e) => {
-                e.preventDefault();
-
-                const response = await fetch(`${apiUrl}/api/${codPostal}`)
-
-                if (response.ok) {
-                    console.log('Evento enviado con éxito');
-                    let result = await response.json()
-                    setEventos(result);
-                } else {
-                    console.error('Error al enviar el evento');
-                }
-                }}>
-                <label>
-                    Introduzca un código postal:
-                    <input
-                        type="text"
-                        value={codPostal}
-                        onChange={(e) => setCodPostal(e.target.value)}
-                    />
-                </label>
-                <button type="submit" variant="primary"> Enviar</button>
-            </form>
             <div id='ubicacion' fluid className='ps-0'>
-                <Mapa pos={[Number(36.734667), Number(-4.426399)]} eventos={eventos}/>
+                <Mapa pos={[Number(36.734667), Number(-4.426399)]} pagos={pagos}/>
             </div>
             <br/>
             <div>
-                <Link href="/api/loginlog">Ver log de usuario</Link>
-            </div>
-            <div>
-                <Link href="/nuevoEvento">Crear otro evento</Link>
+                <Link href="/nuevPago">Crear otro pago</Link>
             </div>
         </div>
     );
 }
 
-export function CardEvento({ evento }) {
+export function CardPago({ pago }) {
     return (
-        <Col key={evento._id} className='mb-3'>
+        <Col key={pago._id} className='mb-3'>
             <Card className='text-center h-100'>
-                <Link href={`/${evento._id}`} className='text-decoration-none flex-fill'>
-                    <CardImg className='flex-fill' src={evento.imagen} alt={evento.nombre} />
+                <Link href={`/${pago._id}`} className='text-decoration-none flex-fill'>
+                    <CardImg className='flex-fill' src={pago.imagen} alt={pago.concepto} />
                 </Link>
-                <Link href={`/${evento._id}`} className='text-decoration-none'>
-                    <CardTitle className='text-wrap mx-2'>{evento.nombre}</CardTitle>
+                <Link href={`/${pago._id}`} className='text-decoration-none'>
+                    <CardTitle className='text-wrap mx-2'>{pago.concepto}</CardTitle>
                 </Link>
-                <Link href={`/${evento._id}`} className='text-decoration-none'>
-                    <CardTitle className='text-wrap mx-2'>{evento.organizador}</CardTitle>
+                <Link href={`/${pago._id}`} className='text-decoration-none'>
+                    <CardTitle className='text-wrap mx-2'>{pago.importe}</CardTitle>
                 </Link>
             </Card>
         </Col>

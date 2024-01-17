@@ -1,12 +1,19 @@
 import mongoose from "mongoose";
 
-const eventoSchema = new mongoose.Schema(
+const pagoSchema = new mongoose.Schema(
     {
-        nombre:{
+        concepto:{
             type: String,
             required: [true]
         },
-        lugar:{
+        importe:{
+            type: Number,
+            required: [true]
+        },
+        direccion:{
+            type: String,
+        },
+        codPostal:{
             type: String,
             required: [true]
         },
@@ -16,7 +23,7 @@ const eventoSchema = new mongoose.Schema(
         lat:{
             type: String
         },
-        organizador:{
+        email: {
             type: String,
         },
         imagen:{
@@ -29,6 +36,6 @@ const eventoSchema = new mongoose.Schema(
     }
 )
 
-export const Evento = 
-    mongoose?.models?.eventos || 
-    mongoose.model("eventos", eventoSchema)
+export const Pago = 
+    mongoose?.models?.pagos || 
+    mongoose.model("pagos", pagoSchema)

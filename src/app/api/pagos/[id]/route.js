@@ -1,15 +1,20 @@
 import connectDB from "@/lib/db";
 import { NextResponse } from "next/server";
-import { Evento } from "@/models/Evento";
+import { Pago } from "@/models/Pago";
+import { getServerSession } from "next-auth";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 export const GET = async (request, { params }) => {
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+
     await connectDB();
     const id = params.id;
     try {
-        const result = await Evento.findById(id);
+        const result = await Pago.findById(id);
         if (!result) {
             return NextResponse.json(
-                { message: `No se ha encontrado un evento con ID ${id}.` },
+                { message: `No se ha encontrado un pago con ID ${id}.` },
                 { status: 404 }
             );
         }
@@ -20,13 +25,16 @@ export const GET = async (request, { params }) => {
 };
 
 export const DELETE = async (request, { params }) => {
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+    
     await connectDB();
     const id = params.id;
     try {
-        const result = await Evento.findByIdAndDelete(id);
+        const result = await Pago.findByIdAndDelete(id);
         if (!result) {
             return NextResponse.json(
-                { message: `No se ha encontrado un evento con ID ${id}.` },
+                { message: `No se ha encontrado un pago con ID ${id}.` },
                 { status: 404 }
             );
         }
@@ -37,14 +45,17 @@ export const DELETE = async (request, { params }) => {
 };
 
 export const PUT = async (request, { params }) => {
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+    
     await connectDB();
     const id = params.id;
     const body = await request.json();
     try {
-        const result = await Evento.findByIdAndUpdate(id, { $set: { ...body } }, { new: true })
+        const result = await Pago.findByIdAndUpdate(id, { $set: { ...body } }, { new: true })
         if (!result) {
             return NextResponse.json(
-                { message: `No se ha encontrado un evento con ID ${id}.` },
+                { message: `No se ha encontrado un pago con ID ${id}.` },
                 { status: 404 }
             );
         }
