@@ -5,8 +5,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 export const GET = async (request, { params }) => {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+    // const session = await getServerSession(authOptions);
+    // if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+    //if (pago.email !== session.user.email) return NextResponse.json({ "error": "Forbidden" }, { status: 403 });
 
     await connectDB();
     const id = params.id;
@@ -25,8 +26,8 @@ export const GET = async (request, { params }) => {
 };
 
 export const DELETE = async (request, { params }) => {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+    // const session = await getServerSession(authOptions);
+    // if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
     
     await connectDB();
     const id = params.id;
@@ -45,9 +46,9 @@ export const DELETE = async (request, { params }) => {
 };
 
 export const PUT = async (request, { params }) => {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
-    
+    // const session = await getServerSession(authOptions);
+    // if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+
     await connectDB();
     const id = params.id;
     const body = await request.json();

@@ -12,12 +12,15 @@ export const GET = async (req, res) => {
     const { searchParams } = new URL(req.url);
     
     const email = searchParams.get("email");
+    const usuario = searchParams.get("usuario");
 
     try {
         let result;
 
         if(email != null) {
             result = await Pago.find({email: email});
+        } else if(usuario != null) {
+            result = await Pago.find({}).distinct(email);
         } else {
             result = await Pago.find({}).sort({createdAt: -1});
         }
@@ -29,14 +32,14 @@ export const GET = async (req, res) => {
 };
 
 export const POST = async (req) => {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
-
     await connectDB();
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
+
         const body = await req.json();
-        console.log(body)
-        const newPago = await Pago.create(body);
+        const newPago = await Pago.create(body)
+        
         return NextResponse.json(newPago, { status: 201 });
     } catch (error) {
         return NextResponse.json(null, { status: 500 });

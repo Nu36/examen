@@ -5,13 +5,13 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 export async function GET(req, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ "error": "Unauthorized" }, { status: 401 });
-    
+
     try {
-        const codPostalEventos = params.codPostal;
+        const codPostalPagos = params.codPostal;
 
         let response;
         //const atributos = ["lat", "lon", "display_name"];
-        response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${codPostalEventos}&countrycodes=es`);
+        response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${codPostalPagos}&countrycodes=es`);
 
         const data = await response.json();
 

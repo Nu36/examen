@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import { signIn, useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
     const [concepto, setConcepto] = useState('');
@@ -15,7 +15,11 @@ export default function Home() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const ubi = await fetch(`${apiUrl}/api/${codPostal}/ubicacion`, { cache: 'no-store' }).then(res => res.json());
+        const ubi = await fetch(`${apiUrl}/api/${codPostal}/ubicacion`, { cache: 'no-store' })
+
+        let ubica = await ubi.json()
+
+        console.log(ubica[0].lat)
 
         const response = await fetch(`${apiUrl}/api/pagos`, {
         method: 'POST',
@@ -28,8 +32,8 @@ export default function Home() {
             direccion: direccion,
             email: session.user.email,
             codPostal: codPostal,
-            lat: ubi[0].lat,
-            lon: ubi[0].lon,
+            lat: ubica[0].lat,
+            lon: ubica[0].lon,
         }),
         });
 
@@ -47,10 +51,9 @@ export default function Home() {
         });
 
         if (responseimg.ok) {
-            console.log('Evento creado con éxito');
-            window.location.href = `/`;
+            console.log('Pago creado con éxito');
         } else {
-            console.error('Error al crear el evento');
+            console.error('Error al crear el pago');
         }
     };
 

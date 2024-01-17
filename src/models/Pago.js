@@ -4,18 +4,18 @@ const pagoSchema = new mongoose.Schema(
     {
         concepto:{
             type: String,
-            required: [true]
+            required: true
         },
         importe:{
-            type: Number,
-            required: [true]
+            type: String,
+            required: true
         },
         direccion:{
             type: String,
         },
         codPostal:{
             type: String,
-            required: [true]
+            required: true
         },
         lon:{
             type: String
